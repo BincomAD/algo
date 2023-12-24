@@ -1,30 +1,31 @@
 func minSubArrayLen(target int, nums []int) int {
-    prefix := make([]int, len(nums) + 1)
+    prefixsum := make([]int, len(nums)+1)
 
-    for i := 0; i < len(nums); i++ {
-        prefix[i+1] = prefix[i] + nums[i]
+    for i := 1; i < len(nums) + 1; i++ {
+        prefixsum[i] = prefixsum[i-1] + nums[i-1]
     }
 
-    i := 0
-    j := 1
-
-    minlen := math.MaxInt
-
-    for j < len(prefix){
-        diff := prefix[j] - prefix[i]
-        if diff < target {
+    i, j := 0, 1
+    max := math.MaxInt
+    flag := false
+    for i < len(prefixsum) {
+        if j < len(nums) && prefixsum[j] - prefixsum[i] < target {
             j++
-        } else {
-            if j - i < minlen{
-                minlen = j - i
+        } else if prefixsum[j] - prefixsum[i] >= target {
+            if max > j - i {
+                flag = true
+                max = j - i
             }
+            i++
+        } else {
             i++
         }
     }
-    
-    if minlen == math.MaxInt {
+
+    if flag {
+        return max
+    } else {
         return 0
     }
 
-    return minlen
 }
